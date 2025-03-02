@@ -1,5 +1,5 @@
 [
-    {"id":1,"cargo":"Admin"},
-    {"id":2,"cargo":"Employee"},
-    {"id":3,"cargo":"Manager"}
+    {"id":1,"cargo":"Admin", "salary": "20000"},
+    {"id":2,"cargo":"Employee", "salary":"15000"},
+    {"id":3,"cargo":"Manager", "salary":"25000"}
 ]

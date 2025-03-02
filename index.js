@@ -1,36 +1,11 @@
-import { isUtf8 } from "buffer";
+
 import express from "express";
 import fs from "fs"
 const app = express();
 const PORT = 3000;
 
 
-// const employees = [
-//   {
-//     id: 1,
-//     cedula: "123456789",
-//     fullname: "John Doe",
-//     pricePerHour: 20,
-//   },
-//   {
-//     id: 2,
-//     cedula: "987654321",
-//     fullname: "Jane Smith",
-//     pricePerHour: 25,
-//   },
-//   {
-//     id: 3,
-//     cedula: "456789123",
-//     fullname: "Alice Johnson",
-//     pricePerHour: 30,
-//   },
-// ];
-const workedHour = [];
-const cargo = [];
-const salary = [];
-const login = [];
-const permiso = [];
-const nomina = [];
+
 
 app.use(express.json());
 
@@ -38,8 +13,9 @@ app.get("/",(req, res)=>{
 
 })
 
-let nextId = 4; // Initialize ID counter
-const employees = []; // Initialize employees array
+let nextId = 4; 
+const employees = []; 
+const cargos = [];
 
 const getEmployee = () =>{
     
@@ -142,6 +118,14 @@ app.post("/employees", (req, res) => {
   res.status(201).json(newEmployee);
 });
 
+//Body:
+
+// {
+//   "cedula": "123456789",
+//   "fullName": "Maria Garcia",
+//   "pricePerHour": 30.00,
+//   "workedHours": 35
+// }
 
 
 app.post("/employee/:id/hours",(req, res)=>{
@@ -178,17 +162,63 @@ app.get("/cargo/:id", (req, res) => {
   
   res.send(findCargo)
 });
-app.get("/cargo/:id/empleado", (req, res) => {});
-app.get("/cargo/empleado/:id", (req, res) => {});
-app.get("/cargo/:id/empleado/:id", (req, res) => {});
-app.get("/cargo/:id/salary", (req, res) => {});
 
-app.post("/cargo/create", (req, res) => {});
-app.post("/cargo/asignEmployee", (req, res) => {
+
+
+app.get("/cargo/:id/empleado", (req, res) => {
+  const parsedId = parseInt(req.params.id);
+  if (isNaN(parsedId)) {
+    res.status(400).send({ message: "Please enter valid cargo" });
+  }
+
+  const employeeCargos = getEmployee()
+  const cargo = employeeCargos.find((cargo) => cargo.id === parsedId);
+  if (!cargo) {
+    res.status(404);
+  }
+  const employeeCargo = cargo.cargo;
+  const employeeName = cargo.fullName
+  
+  res.send(`el empleado: ${employeeName} tiene un cargo de ${employeeCargo} `)
+});
+
+
+app.get("/cargo/:id/salary", (req, res) => {
+  const parsedId = parseInt(req.params.id);
+  if (isNaN(parsedId)) {
+    res.status(400).send({ message: "Please enter valid cargo" });
+  }
+
+  const employeeCargos = getEmployee()
+  const cargo = employeeCargos.find((cargo) => cargo.id === parsedId);
+  if (!cargo) {
+    res.status(404);
+  }
+  const employeeCargo = cargo.cargo;
+  const cargoSalary = cargo.salary; 
+  res.send(`Los empleados del cargo ${employeeCargo}, tienen un salario de ${cargoSalary}Dop`)
 
 });
 
+
+
+app.post("/cargo/create", (req, res) => {
+  if(!req.body.cargo || !req.body.salary){
+    return res.status(400).json
+  }
+  const newCargo = {
+    id: nextId++,
+    cargo:req.body.cargo,
+    salary:req.body.salary
+  }
+  cargos.push(newCargo);
+  res.status(201).json(newCargo)
+});
+app.post("/cargo/asignEmployee", (req, res) => {});
+
+
 app.put("/cargo/update", (req, res) => {});
+
 
 app.patch("/cargo/delete/:id", (req, res) => {});
 
@@ -206,7 +236,6 @@ app.put("/ponche/ponchar/", (req, res) => {});
 app.get("/nomina/all", (req, res) => {});
 app.get("/nomina/empleado/:id", (req, res) => {});
 app.get("/nomina/:id/empleado/:id", (req, res) => {});
-
 app.post("/nomina/genNomina", (req, res) => {});
 
 //Routes for login
