@@ -1,5 +1,5 @@
 [
-    {"cargo":"Admin","active":true, "isByPass":true},
-    {"cargo":"Employee","active":true, "isByPass":true},
-    {"cargo":"Manager","active":false, "isByPass":true}
+    {"id":1,"cargo":"Admin"},
+    {"id":2,"cargo":"Employee"},
+    {"id":3,"cargo":"Manager"}
 ]

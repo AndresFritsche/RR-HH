@@ -38,6 +38,9 @@ app.get("/",(req, res)=>{
 
 })
 
+let nextId = 4; // Initialize ID counter
+const employees = []; // Initialize employees array
+
 const getEmployee = () =>{
     
     const data = fs.readFileSync("./employees.json", "utf-8")
@@ -45,11 +48,6 @@ const getEmployee = () =>{
     return parseData
 }
 
-const getHoursWorked = () => {
-    const data = fs.readFileSync("./workedhours.json", "utf-8")
-    const parseData = JSON.parse(data)
-    return parseData
-}
 const getCargos = () => {
   const data = fs.readFileSync("./cargos.json")
   const parseData = JSON.parse(data)
@@ -60,24 +58,32 @@ const getCargos = () => {
 
     
 
-//Route for Employee
+//Routes for Employee
 
 
 app.get("/employees/all", (req, res) => {
   res.json(getEmployee());
 });
 
+
+
 app.get("/employee/:id", (req, res) => {
   const parsedId = parseInt(req.params.id);
   if (isNaN(parsedId)) {
     res.status(400).send({ message: "Please enter valid employee" });
   }
-  const findEmployee = parseData.find((employee) => employee.id === parsedId);
+
+  const employee  = getEmployee()
+  
+  
+
+  const findEmployee = employee.find((employee) => employee.id === parsedId);
   if (!findEmployee) {
     res.status(404);
   }
-  res.send(findEmployee)
+  res.send(findEmployee);
 });
+
 
 app.get("/employee/:id/hours", (req, res) => {
   const parsedId = parseInt(req.params.id);
@@ -95,6 +101,9 @@ app.get("/employee/:id/hours", (req, res) => {
   const employeeWorkedHours = employee.workedHours
   res.json(`Name: ${employeeFullName} | Worked Hours: ${employeeWorkedHours}`)
 });
+
+
+
 app.get("/employee/:id/salary", (req, res) => {
   const parsedId = parseInt(req.params.id);
   if (isNaN(parsedId)){
@@ -102,7 +111,6 @@ app.get("/employee/:id/salary", (req, res) => {
   }
   const employeeList = getEmployee()
   const employee = employeeList.find((employee)=> employee.id === parsedId)
-  console.log(employee);
   if(!employee){
     res.status(404).send()
   }
@@ -110,20 +118,65 @@ app.get("/employee/:id/salary", (req, res) => {
   res.json(employeeSalary)
 });
 
-app.post("employee/create", (req, res) => {});
 
-app.put("employee/update", (req, res) => {
+
+app.post("/employees", (req, res) => {
   
+  if (!req.body.cedula || !req.body.fullName || !req.body.pricePerHour || !req.body.workedHours) {
+    return res.status(400).json
+  }
+
+
+  const salary = req.body.pricePerHour * req.body.workedHours;
+
+  const newEmployee = {
+    id: nextId++, 
+    cedula: req.body.cedula,
+    fullName: req.body.fullName,
+    pricePerHour: req.body.pricePerHour,
+    workedHours: req.body.workedHours,
+    salary: salary 
+  };
+
+  employees.push(newEmployee);
+  res.status(201).json(newEmployee);
 });
-app.patch("employee/delete/:id", (req, res) => {});
 
-// Route for cargo
 
-app.get("/cargo/all", (req, res) => {
-  res.json();
+
+app.post("/employee/:id/hours",(req, res)=>{
+
+})
+app.put("/employee/:id",(req, res)=>{
+
+})
+app.delete("/employee",(req, res)=>{
+
+})
+
+
+
+
+// Routes for cargo
+
+app.get("/cargos/all", (req, res) => {
+  res.json(getCargos())
 });
 app.get("/cargo/:id", (req, res) => {
+  const parsedId = parseInt(req.params.id);
+  if (isNaN(parsedId)) {
+    res.status(400).send({ message: "Please enter valid cargo" });
+  }
 
+  const cargoList = getCargos()
+  
+
+  const findCargo = cargoList.find((cargo) => cargo.id === parsedId);
+  if (!findCargo) {
+    res.status(404);
+  }
+  
+  res.send(findCargo)
 });
 app.get("/cargo/:id/empleado", (req, res) => {});
 app.get("/cargo/empleado/:id", (req, res) => {});
@@ -132,14 +185,14 @@ app.get("/cargo/:id/salary", (req, res) => {});
 
 app.post("/cargo/create", (req, res) => {});
 app.post("/cargo/asignEmployee", (req, res) => {
-  const { employeeId, cargo } = req.body;
+
 });
 
 app.put("/cargo/update", (req, res) => {});
 
 app.patch("/cargo/delete/:id", (req, res) => {});
 
-//Route for Ponche
+//Routes for Ponche
 
 app.get("/ponche/all", (req, res) => {});
 app.get("/ponche/empleado/:id", (req, res) => {});
@@ -148,7 +201,7 @@ app.get("/ponche/:id/empleado/:id", (req, res) => {});
 
 app.put("/ponche/ponchar/", (req, res) => {});
 
-//Route for Nomina
+//Routes for Nomina
 
 app.get("/nomina/all", (req, res) => {});
 app.get("/nomina/empleado/:id", (req, res) => {});
@@ -156,7 +209,7 @@ app.get("/nomina/:id/empleado/:id", (req, res) => {});
 
 app.post("/nomina/genNomina", (req, res) => {});
 
-//Route for login
+//Routes for login
 app.get("/account/rol", (req, res) => {});
 app.get("/account/rol/:id", (req, res) => {});
 app.get("/account/:user/rol/:id/permisos", (req, res) => {});
@@ -168,7 +221,7 @@ app.post("/account/register", (req, res) => {});
 app.put("/account/rol/asignPermission/", (req, res) => {});
 app.put("/account/rol/update/", (req, res) => {});
 
-// Permisos
+// Routes for Permisos
 
 app.get("/permisos/all", (req, res) => {});
 app.get("/permisos/:id", (req, res) => {});
