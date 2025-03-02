@@ -86,13 +86,14 @@ app.get("/employee/:id/hours", (req, res) => {
   }
   const employeeList = getEmployee()
   const employee = employeeList.find((employee)=> employee.id === parsedId)
-  console.log(employee);
+
   if(!employee){
     res.status(404).send()
   }
+  const employeeFullName = employee.fullName
+  
   const employeeWorkedHours = employee.workedHours
-  console.log(employeeWorkedHours)
-  res.json(employeeWorkedHours)
+  res.json(`Name: ${employeeFullName} | Worked Hours: ${employeeWorkedHours}`)
 });
 app.get("/employee/:id/salary", (req, res) => {
   const parsedId = parseInt(req.params.id);
