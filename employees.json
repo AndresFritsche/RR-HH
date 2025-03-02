@@ -1,0 +1,26 @@
+[
+    {
+        "id": 1,
+        "cedula": "123456789",
+        "fullname": "John Doe",
+        "pricePerHour": 20,
+        "workedHours": 40,
+        "salary":"18000"
+    },
+    {
+        "id": 2,
+        "cedula": "987654321",
+        "fullname": "Jane Smith",
+        "pricePerHour": 25,
+        "workedHours": 30,
+        "salary":"12000"
+    },
+    {
+        "id": 3,
+        "cedula": "456789123",
+        "fullname": "Alice Johnson",
+        "pricePerHour": 30,
+        "workedHours": 20,
+        "salary":"15000"
+    }
+]
