@@ -9,12 +9,10 @@ const PORT = 3000;
 
 app.use(express.json());
 
-app.get("/",(req, res)=>{
 
-})
-
-let nextId = 4; 
+let employeeCounter = 0; 
 const employees = []; 
+let cargoCounter = 0
 const cargos = [];
 
 const getEmployee = () =>{
@@ -106,7 +104,7 @@ app.post("/employees", (req, res) => {
   const salary = req.body.pricePerHour * req.body.workedHours;
 
   const newEmployee = {
-    id: nextId++, 
+    id: employeeCounter++, 
     cedula: req.body.cedula,
     fullName: req.body.fullName,
     pricePerHour: req.body.pricePerHour,
@@ -165,7 +163,7 @@ app.get("/cargo/:id", (req, res) => {
 
 
 
-app.get("/cargo/:id/empleado", (req, res) => {
+app.get("/cargo/:id/employee", (req, res) => {
   const parsedId = parseInt(req.params.id);
   if (isNaN(parsedId)) {
     res.status(400).send({ message: "Please enter valid cargo" });
@@ -207,13 +205,22 @@ app.post("/cargo/create", (req, res) => {
     return res.status(400).json
   }
   const newCargo = {
-    id: nextId++,
+    id: cargoCounter++,
     cargo:req.body.cargo,
     salary:req.body.salary
   }
   cargos.push(newCargo);
   res.status(201).json(newCargo)
 });
+
+//Body:
+
+// {
+//  "cargo":"Manager", "salary":"25000"
+// }
+
+
+
 app.post("/cargo/asignEmployee", (req, res) => {});
 
 
